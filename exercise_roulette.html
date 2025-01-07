@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise Roulette</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+            background-color: #F3BDB1;
+            color: #464646;
+        }
+
+        h1 {
+            color: #E9651B;
+        }
+
+        p {
+            color: #464646;
+        }
+
+        .roulette {
+            margin: 20px auto;
+            width: 300px;
+            height: 300px;
+            background-color: #E9651B;
+            border: 5px solid #E9651B;
+            border-radius: 50%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .roulette .exercise {
+            color: #FFFFFF;
+            font-size: 1.5em;
+            font-weight: bold;
+            animation: spin 2s ease-in-out;
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #E9651B;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #C8531A;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 1.5em;
+            color: #464646;
+        }
+
+        .timer {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #464646;
+        }
+
+        .history {
+            margin-top: 30px;
+            text-align: left;
+            padding: 20px;
+            background-color: #FFF;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .history h3 {
+            margin: 0;
+            color: #E9651B;
+        }
+
+        .history ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .history li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Exercise Roulette</h1>
+    <p>Click the button to spin and get your exercise!</p>
+
+    <div class="roulette">
+        <div class="exercise" id="exerciseDisplay">?</div>
+    </div>
+
+    <button onclick="spinRoulette()">Spin the Roulette</button>
+
+    <div class="result" id="resultDisplay"></div>
+
+    <div class="timer">
+        <p>Timer: <span id="timerDisplay">0:00</span></p>
+        <button onclick="startTimer()">Start</button>
+        <button onclick="pauseTimer()">Pause</button>
+        <button onclick="resetTimer()">Reset</button>
+    </div>
+
+    <div class="history">
+        <h3>Exercise History</h3>
+        <ul id="historyList"></ul>
+    </div>
+
+    <script>
+        const exercises = [
+            "Agachamento",
+            "Agachamento com Salto",
+            "Elevação Pélvica",
+            "Polichinelo",
+            "Prancha",
+            "Afundo",
+            "Sumo com Salto",
+            "Salto com Corda Imaginária"
+        ];
+
+        let timerInterval; // Para armazenar o intervalo do cronômetro
+        let timerSeconds = 0; // Contador de segundos
+        let isPaused = false; // Flag para pausa do cronômetro
+
+        // Função para sortear exercício
+        function spinRoulette() {
+            const randomExercise = exercises[Math.floor(Math.random() * exercises.length)];
+            const repetitions = Math.random() < 0.5 ? 10 : 20;
+            const exerciseDisplay = document.getElementById('exerciseDisplay');
+            const resultDisplay = document.getElementById('resultDisplay');
+            const historyList = document.getElementById('historyList');
+
+            exerciseDisplay.textContent = "Spinning...";
+            setTimeout(() => {
+                exerciseDisplay.textContent = randomExercise;
+                resultDisplay.textContent = `Faça ${repetitions} repetições de ${randomExercise}!`;
+
+                // Adicionar ao histórico
+                const historyItem = document.createElement('li');
+                historyItem.textContent = `${randomExercise} - ${repetitions} repetições`;
+                historyList.appendChild(historyItem);
+            }, 2000);
+        }
+
+        // Função para iniciar o cronômetro
+        function startTimer() {
+            if (timerInterval || isPaused) return; // Evitar múltiplos cronômetros ou retomar pausado
+            timerInterval = setInterval(() => {
+                timerSeconds++;
+                updateTimerDisplay();
+            }, 1000);
+        }
+
+        // Função para pausar o cronômetro
+        function pauseTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                isPaused = true;
+            }
+        }
+
+        // Função para resetar o cronômetro
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            timerSeconds = 0;
+            isPaused = false;
+            updateTimerDisplay();
+        }
+
+        // Função para atualizar a exibição do cronômetro
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timerSeconds / 60);
+            const seconds = timerSeconds % 60;
+            const timerDisplay = document.getElementById('timerDisplay');
+            timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+    </script>
+</body>
+</html>
